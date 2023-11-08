@@ -1,0 +1,32 @@
+{
+    "name": "tiacx/laravel-apifox",
+    "description": "Laravel-ApiFox",
+    "type": "library",
+    "require": {
+        "php": ">=7.0.0",
+        "laravel/framework": ">=5.5.0",
+        "guzzlehttp/guzzle": ">=6.5.8",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tiacx\\ApiFox\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tiac"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tiacx\\ApiFox\\ApiFoxProvider"
+            ]
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "version": "1.0.0"
+}
