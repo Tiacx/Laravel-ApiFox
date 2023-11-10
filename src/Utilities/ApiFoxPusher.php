@@ -98,7 +98,7 @@ class ApiFoxPusher
             return $this->response->getData(true);
         } elseif ($this->response->headers->get('content-type') == 'application/json') {
             return json_decode($this->response->getContent(), true);
-        } elseif ($this->response->getFile()) {
+        } elseif (method_exists($this->response, 'getFile') && $this->response->getFile()) {
             return [];
         } else {
             return $this->response->getContent();
@@ -151,13 +151,15 @@ class ApiFoxPusher
         $contentType = $this->response->headers->get('content-type');
         $responseData = $this->getResponseData();
         if (empty($responseData)) $contentType = 'application/octet-stream';
+        if (strpos($contentType, 'text') === 0) $contentType = '*/*';
         $info['responses'] = [];
         $info['responses'][$statusCode] = [];
         $info['responses'][$statusCode]['description'] = $statusCode == 200 ? '成功' :  __('http-statuses.' . $statusCode, [], 'zh_CN');
         $info['responses'][$statusCode]['content'] = [];
         $info['responses'][$statusCode]['content'][$contentType] = [];
-        $info['responses'][$statusCode]['content'][$contentType]['schema'] = ApiFoxHelper::genSchema($responseData);
+        $info['responses'][$statusCode]['content'][$contentType]['schema'] = ApiFoxHelper::genSchema(is_array($responseData) ? $responseData : []);
         if (!empty($responseData)) {
+            if (is_string($responseData) && strlen($responseData) >= 10000) $responseData = '';
             $info['responses'][$statusCode]['content'][$contentType]['examples'] = [
                 1 => [
                     'summary' => '示例',

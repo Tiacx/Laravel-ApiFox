@@ -10,7 +10,7 @@ Laravel-ApiFox
 ---
 
 ```bash
-composer require tiacx/laravel-apifox
+composer require tiacx/laravel-apifox --dev
 ```
 
 配置
@@ -30,7 +30,7 @@ php artisan vendor:publish --tag=config
 
 ```yaml
 APIFOX_PROJECT_ID=3481718
-APIFOX_ACCESS_TOKEN=APS-8YGmxRP5V3w5dWER6WEbRtd7rwe
+APIFOX_ACCESS_TOKEN=APS-8YGmxRP5V3w5dWER6WEXXXXXXXXXX
 ```
 
 注：项目ID 及 访问令牌的获取方法请参考官方开放平台说明（https://apifox-openapi.apifox.cn/）
