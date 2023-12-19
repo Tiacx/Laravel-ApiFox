@@ -41,7 +41,7 @@ APIFOX_ACCESS_TOKEN=APS-8YGmxRP5V3w5dWER6WEXXXXXXXXXX
 在 `TestCase` 方法处添加 `@apifox.name` 及 `@apifox.tags` 标识，然后运行 `TestCase` 即可。
 
 + `@apifox.name` 接口名称（必填）
-+ `@apifox.name` 接口描述（非必填）
++ `@apifox.description` 接口描述（非必填）
 + `@apifox.tags` 接口目录（非必填。支持多级，使用 `/` 隔开）
 + `@apifox.withHeaders` 带上头信息（非必填。公共头应该在 `ApiFox` 里设置）
 
