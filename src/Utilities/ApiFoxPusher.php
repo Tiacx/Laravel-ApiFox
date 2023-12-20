@@ -67,7 +67,10 @@ class ApiFoxPusher
         $controller = method_exists($this->route, 'getControllerClass') ? $this->route->getControllerClass() : $this->route->getController();
         $parameters = ApiFoxHelper::getMethodParameters($controller, $this->route->getActionMethod());
         if (isset($parameters['request'])) {
-            return app($parameters['request'])->rules();
+            $rules = (new $parameters['request'])->rules();
+            return array_map(function ($value) {
+                return is_array($value) ? implode('|', $value) : $value;
+            }, $rules);
         } else {
             return [];
         }
@@ -82,7 +85,7 @@ class ApiFoxPusher
         $controller = method_exists($this->route, 'getControllerClass') ? $this->route->getControllerClass() : $this->route->getController();
         $parameters = ApiFoxHelper::getMethodParameters($controller, $this->route->getActionMethod());
         if (isset($parameters['request'])) {
-            return app($parameters['request'])->attributes();
+            return (new $parameters['request'])->attributes();
         } else {
             return [];
         }
@@ -202,8 +205,8 @@ class ApiFoxPusher
         $this->testInfo = $this->getTestInfo();
         if (!data_get($this->testInfo, 'apifox.name')) return;
 
-        $projectId = config('apifox.project_id');
-        $token = config('apifox.access_token');
+        $projectId = config('apifox.project_id', getenv('APIFOX_PROJECT_ID'));
+        $token = config('apifox.access_token', getenv('APIFOX_ACCESS_TOKEN'));
 
         if (empty($projectId) || empty($token)) {
             throw new \Exception('ApiFox 配置错误，请检查配置~');
@@ -217,6 +220,8 @@ class ApiFoxPusher
                 'Content-Type' => 'application/json'
             ],
         ]);
+
+        $this->genJsonData();
 
         $response = $client->post("https://api.apifox.cn/api/v1/projects/{$projectId}/import-data", [
             'json' => [
