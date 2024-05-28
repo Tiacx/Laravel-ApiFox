@@ -73,6 +73,10 @@ class ApiFoxHelper
     {
         $results = [];
         foreach ($parameters as $name => $value) {
+            if (!isset($value[0])) {
+                $name = $name . '[' . key($value) . ']';
+                $value = [current($value)];
+            }
             $results[] = [
                 'name' => $name,
                 'in' => $in,
