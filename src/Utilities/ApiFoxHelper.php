@@ -5,12 +5,16 @@ namespace Tiacx\ApiFox\Utilities;
 use ReflectionClass;
 use Illuminate\Support\Arr;
 use Illuminate\Http\UploadedFile;
+use ReflectionException;
 
 class ApiFoxHelper
 {
     /**
      * 获取文档注释
+     * @param string $className
+     * @param string $methodName
      * @return array
+     * @throws ReflectionException
      */
     public static function getDocComment(string $className, string $methodName): array
     {
@@ -29,7 +33,10 @@ class ApiFoxHelper
 
     /**
      * 获取方法参数
+     * @param $classOrName
+     * @param string $methodName
      * @return array
+     * @throws ReflectionException
      */
     public static function getMethodParameters($classOrName, string $methodName): array
     {

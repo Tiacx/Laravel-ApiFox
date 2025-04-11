@@ -42,7 +42,8 @@ APIFOX_ACCESS_TOKEN=APS-8YGmxRP5V3w5dWER6WEXXXXXXXXXX
 
 + `@apifox.name` 接口名称（必填）
 + `@apifox.description` 接口描述（非必填）
-+ `@apifox.tags` 接口目录（非必填。支持多级，使用 `/` 隔开）
++ `@apifox.dirs` 接口目录（非必填。支持多级，使用 `/` 隔开）
++ `@apifox.tags` 接口标签（非必填。支持多级，使用 `/` 隔开）
 + `@apifox.withHeaders` 带上头信息（非必填。公共头应该在 `ApiFox` 里设置）
 
 ```php
@@ -57,7 +58,8 @@ class ExampleTest extends TestCase
     /**
      * @test 测试生成ApiFox文档
      * @apifox.name 这是一个测试接口
-     * @apifox.tags Admin/Test
+     * @apifox.dirs Admin/Test
+     * @apifox.tags test
      */
     public function test_laravel_apifox(): void
     {

@@ -2,9 +2,11 @@
 
 namespace Tiacx\ApiFox\Utilities;
 
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use ReflectionException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiFoxPusher
@@ -44,6 +46,7 @@ class ApiFoxPusher
     /**
      * 获取测试信息
      * @return array
+     * @throws ReflectionException
      */
     protected function getTestInfo(): array
     {
@@ -61,6 +64,7 @@ class ApiFoxPusher
     /**
      * 获取表单规则
      * @return array
+     * @throws ReflectionException
      */
     protected function getRules(): array
     {
@@ -79,6 +83,7 @@ class ApiFoxPusher
     /**
      * 获取表单屬性
      * @return array
+     * @throws ReflectionException
      */
     protected function getAttributes(): array
     {
@@ -111,16 +116,17 @@ class ApiFoxPusher
     /**
      * 获取Api信息
      * @return array
+     * @throws ReflectionException
      */
     protected function getApiInfo(): array
     {
         $info = [];
         $info['summary'] = data_get($this->testInfo, 'apifox.name', $this->testInfo['test'] ?? $this->route->uri);
-        $info['x-apifox-folder'] = data_get($this->testInfo, 'apifox.tags', '');
+        $info['x-apifox-folder'] = data_get($this->testInfo, 'apifox.dirs', '');
         $info['x-apifox-status'] = 'pending';
         $info['deprecated'] = (bool)data_get($this->testInfo, 'apifox.deprecated', false);
         $info['description'] = data_get($this->testInfo, 'apifox.description', '');
-        $info['tags'] = [data_get($this->testInfo, 'apifox.tags', '')];
+        $info['tags'] = explode('/', data_get($this->testInfo, 'apifox.tags', ''));
         $info['parameters'] = [];
 
         if (data_get($this->testInfo, 'apifox.withHeaders')) {
@@ -128,7 +134,7 @@ class ApiFoxPusher
         }
 
         preg_match_all("/{(\w+)}/", $this->route->uri, $matches);
-        if (isset($matches[1]) && !empty($matches[1])) {
+        if (!empty($matches[1])) {
             $info['parameters'] = array_merge($info['parameters'], ApiFoxHelper::handleParameters(array_reduce($matches[1], function($carry, $name) {
                 $carry[$name] = [''];
                 return $carry;
@@ -178,6 +184,7 @@ class ApiFoxPusher
      * 生成 json 数据
      * @see https://apifox-openapi.apifox.cn/
      * @return array
+     * @throws ReflectionException
      */
     protected function genJsonData(): array
     {
@@ -199,6 +206,7 @@ class ApiFoxPusher
     /**
      * 处理
      * @return void
+     * @throws Exception
      */
     public function handle()
     {
@@ -209,7 +217,7 @@ class ApiFoxPusher
         $token = config('apifox.access_token', getenv('APIFOX_ACCESS_TOKEN'));
 
         if (empty($projectId) || empty($token)) {
-            throw new \Exception('ApiFox 配置错误，请检查配置~');
+            throw new Exception('ApiFox 配置错误，请检查配置~');
         }
 
         $client = new Client([
@@ -220,8 +228,6 @@ class ApiFoxPusher
                 'Content-Type' => 'application/json'
             ],
         ]);
-
-        $this->genJsonData();
 
         $response = $client->post("https://api.apifox.cn/api/v1/projects/{$projectId}/import-data", [
             'json' => [

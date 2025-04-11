@@ -3,6 +3,7 @@
 namespace Tiacx\ApiFox\Middleware;
 
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Tiacx\ApiFox\Utilities\ApiFoxPusher;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,10 @@ class ApiFoxMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Request $request
+     * @param Closure(Request): (Response) $next
+     * @return Response
+     * @throws Exception
      */
     public function handle(Request $request, Closure $next): Response
     {
