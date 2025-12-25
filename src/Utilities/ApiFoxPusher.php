@@ -4,6 +4,7 @@ namespace Tiacx\ApiFox\Utilities;
 
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use ReflectionException;
@@ -70,7 +71,7 @@ class ApiFoxPusher
     {
         $controller = method_exists($this->route, 'getControllerClass') ? $this->route->getControllerClass() : $this->route->getController();
         $parameters = ApiFoxHelper::getMethodParameters($controller, $this->route->getActionMethod());
-        if (isset($parameters['request'])) {
+        if (isset($parameters['request']) && $parameters['request'] instanceof FormRequest) {
             $rules = (new $parameters['request'])->rules();
             return array_map(function ($value) {
                 return is_array($value) ? implode('|', $value) : $value;
@@ -89,7 +90,7 @@ class ApiFoxPusher
     {
         $controller = method_exists($this->route, 'getControllerClass') ? $this->route->getControllerClass() : $this->route->getController();
         $parameters = ApiFoxHelper::getMethodParameters($controller, $this->route->getActionMethod());
-        if (isset($parameters['request'])) {
+        if (isset($parameters['request']) && $parameters['request'] instanceof FormRequest) {
             return (new $parameters['request'])->attributes();
         } else {
             return [];
